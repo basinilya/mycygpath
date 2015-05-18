@@ -11,4 +11,5 @@ $(TARGET): $(OFILES)
 
 clean:
 	rm -f *.o
-
+test:
+	<test-orig.txt ./$(TARGET)
