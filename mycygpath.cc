@@ -58,6 +58,8 @@ int main(int argc, char* argv[]) {
 	wstring ws;
 	wchar_t delim = '\n';
 
+	setlocale(LC_ALL, "");
+
 	int c;
 	while ((c = getopt (argc, argv, "0d:")) != -1)
 		switch(c)

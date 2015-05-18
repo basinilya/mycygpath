@@ -24,17 +24,23 @@ mycygpath(UNICODE_STRING *pupath, int dos) /* was "get_nt_native_path" */
 	 That makes these broken filesystems a bit slower, but, hey. */
       PWCHAR cp = upath.Buffer + 0;
       PWCHAR cend = upath.Buffer + upath.Length / sizeof (WCHAR);
-      while (++cp < cend)
-	if (*cp == L'/') /* < forward slash kept */
-	  {
-	    PWCHAR ccp = cp - 1;
-	    while (*ccp == L'.' || *ccp == L' ')
-	      *ccp-- |= 0xf000;
-	    while (cp[1] == L' ')
-	      *++cp |= 0xf000;
-	  }
-      while (*--cp == L'.' || *cp == L' ')
-	*cp |= 0xf000;
+	bool justdots = true;
+	while ((justdots &= (*cp == '.')), ++cp < cend)
+		if (*cp == L'/') /* < forward slash kept */
+		{
+			if (!justdots) {
+				PWCHAR ccp = cp - 1;
+				while (*ccp == L'.' || *ccp == L' ')
+					*ccp-- |= 0xf000;
+				while (cp[1] == L' ')
+					*++cp |= 0xf000;
+				justdots = true;
+			}
+			++cp;
+		}
+	if (!justdots) while (*--cp == L'.' || *cp == L' ')
+		*cp |= 0xf000;
+
     }
   return &upath;
 }
